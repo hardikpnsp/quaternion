@@ -1,6 +1,7 @@
 use crate::quaternion::Quaternion;
+use std::ops::Mul;
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Vector {
     pub x: f64,
     pub y: f64,
@@ -9,12 +10,22 @@ pub struct Vector {
 
 impl Vector {
     pub fn rotate(&mut self, rotation_axis: &Vector, angle: f64) {
-        let p = Quaternion::from_xyz(self.x, self.y, self.z);
-        let q = Quaternion::rotation(rotation_axis, angle / 2.0);
-        let qi = Quaternion::rotation(rotation_axis, -angle / 2.0);
+        let identity_rotation_axis = &rotation_axis.convert_to_identity();
 
-        let rotated = q * p * qi;
-        *self = rotated.to_vector();
+        let point = Quaternion::from_xyz(self.x, self.y, self.z);
+        let rotation = Quaternion::rotation(identity_rotation_axis, angle / 2.0);
+        let inverse_rotation = Quaternion::rotation(identity_rotation_axis, -angle / 2.0);
+
+        let rotated_point = rotation * point * inverse_rotation;
+        *self = rotated_point.to_vector();
+    }
+
+    pub fn convert_to_identity(self) -> Vector {
+        self * (1.0 / self.modulo())
+    }
+
+    fn modulo(&self) -> f64 {
+        (self.x.powf(2.0) + self.y.powf(2.0) + self.z.powf(2.0)).sqrt()
     }
 }
 
@@ -23,6 +34,18 @@ impl PartialEq<Vector> for Vector {
         (self.x - other.x).abs() <= f64::EPSILON
             && (self.y - other.y).abs() <= f64::EPSILON
             && (self.z - other.z).abs() <= f64::EPSILON
+    }
+}
+
+impl Mul<f64> for Vector {
+    type Output = Vector;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Vector {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
     }
 }
 
@@ -57,6 +80,24 @@ mod tests {
                 x: 0.0,
                 y: 1.0,
                 z: 0.0
+            }
+        )
+    }
+
+    #[test]
+    fn convert_to_identity() {
+        let v = Vector {
+            x: 4.0,
+            y: 4.0,
+            z: 2.0,
+        };
+
+        assert_eq!(
+            v.convert_to_identity(),
+            Vector {
+                x: 4.0 / 6.0,
+                y: 4.0 / 6.0,
+                z: 2.0 / 6.0
             }
         )
     }

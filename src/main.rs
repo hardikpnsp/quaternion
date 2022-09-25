@@ -33,7 +33,7 @@ fn main() {
 
 fn read_yorn() -> String {
     let mut input = String::new();
-    stdout().flush();
+    stdout().flush().unwrap();
     stdin()
         .read_line(&mut input)
         .expect("Did not enter a correct string");
@@ -43,7 +43,7 @@ fn read_yorn() -> String {
 
 fn read_f64() -> f64 {
     let mut input = String::new();
-    stdout().flush();
+    stdout().flush().unwrap();
     stdin()
         .read_line(&mut input)
         .expect("Did not enter a correct string");
@@ -54,7 +54,7 @@ fn read_f64() -> f64 {
 
 fn read_vector() -> Vector {
     let mut input = String::new();
-    stdout().flush();
+    stdout().flush().unwrap();
     stdin()
         .read_line(&mut input)
         .expect("Did not enter a correct string");
