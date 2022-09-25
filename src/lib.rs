@@ -1,2 +1,2 @@
-mod quaternion;
-mod vector;
+pub mod quaternion;
+pub mod vector;
