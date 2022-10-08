@@ -1,6 +1,4 @@
-# Rapid Prototype Series: Quaternion
-
-Time limit: 2 days
+# Quaternion
 
 ## Description
 A quaternion can be used to store information about rotation of an object in 3 dimensions. 
